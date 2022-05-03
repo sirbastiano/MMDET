@@ -1,8 +1,8 @@
-# _base_ = [
-#     '../_base_/models/retinanet_r50_fpn.py',
-#     '../_base_/datasets/coco_detection.py', '../_base_/default_runtime.py'
-# ]
-_base_ = '/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/configs/MyBaselines/RetinaNet.py'
+_base_ = [
+    '../_base_/models/retinanet_r50_fpn.py',
+    '../_base_/datasets/coco_detection.py', '../_base_/default_runtime.py'
+]
+
 cudnn_benchmark = True
 norm_cfg = dict(type='BN', requires_grad=True)
 checkpoint = 'https://download.openmmlab.com/mmclassification/v0/efficientnet/efficientnet-b3_3rdparty_8xb32-aa_in1k_20220119-5b4887a0.pth'  # noqa
@@ -88,7 +88,6 @@ lr_config = dict(
 # runtime settings
 runner = dict(type='EpochBasedRunner', max_epochs=12)
 
-# NOTE: `auto_scale_lr` is for automatically scaling LR,
-# USER SHOULD NOT CHANGE ITS VALUES.
-# base_batch_size = (8 GPUs) x (4 samples per GPU)
-auto_scale_lr = dict(base_batch_size=32)
+# NOTE: This variable is for automatically scaling LR,
+# USER SHOULD NOT CHANGE THIS VALUE.
+default_batch_size = 32  # (8 GPUs) x (4 samples per GPU)

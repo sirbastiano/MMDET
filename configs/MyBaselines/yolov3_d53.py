@@ -1,4 +1,4 @@
-base_ = '../_base_/default_runtime.py'
+base_ = '/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/configs/Baseline/_base_/default_runtime.py'
 # model settings
 model = dict(
     type='YOLOV3',
@@ -14,7 +14,7 @@ model = dict(
         out_channels=[512, 256, 128]),
     bbox_head=dict(
         type='YOLOV3Head',
-        num_classes=80,
+        num_classes=1,
         in_channels=[512, 256, 128],
         out_channels=[1024, 512, 256],
         anchor_generator=dict(
@@ -60,7 +60,7 @@ dataset_type = 'CocoDataset'
 data_root = 'data/coco/'
 img_norm_cfg = dict(mean=[0, 0, 0], std=[255., 255., 255.], to_rgb=True)
 train_pipeline = [
-    dict(type='LoadImageFromFile', to_float32=True),
+    dict(type='LoadImageFromFile',color_type='color', to_float32=True),
     dict(type='LoadAnnotations', with_bbox=True),
     dict(
         type='Expand',
@@ -80,7 +80,7 @@ train_pipeline = [
     dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
 ]
 test_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile',color_type='color'),
     dict(
         type='MultiScaleFlipAug',
         img_scale=(608, 608),
@@ -94,9 +94,10 @@ test_pipeline = [
             dict(type='Collect', keys=['img'])
         ])
 ]
+
 data = dict(
-    samples_per_gpu=8,
-    workers_per_gpu=4,
+    samples_per_gpu=1,
+    workers_per_gpu=1,
     train=dict(
         type=dataset_type,
         ann_file=data_root + 'annotations/instances_train2017.json',
@@ -129,4 +130,5 @@ evaluation = dict(interval=1, metric=['bbox'])
 # NOTE: `auto_scale_lr` is for automatically scaling LR,
 # USER SHOULD NOT CHANGE ITS VALUES.
 # base_batch_size = (8 GPUs) x (8 samples per GPU)
-auto_scale_lr = dict(base_batch_size=64)
+# auto_scale_lr = dict(base_batch_size=64)
+work_dir = 'checkpoints/yolov3_d53_273e'  # Directory to save the model checkpoints and logs for the current experiments.

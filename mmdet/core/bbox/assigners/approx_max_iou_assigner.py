@@ -45,7 +45,8 @@ class ApproxMaxIoUAssigner(MaxIoUAssigner):
                  ignore_iof_thr=-1,
                  ignore_wrt_candidates=True,
                  match_low_quality=True,
-                 gpu_assign_thr=-1,
+                #  gpu_assign_thr=-1, # MOVE TO CPU
+                 gpu_assign_thr=1,
                  iou_calculator=dict(type='BboxOverlaps2D')):
         self.pos_iou_thr = pos_iou_thr
         self.neg_iou_thr = neg_iou_thr
