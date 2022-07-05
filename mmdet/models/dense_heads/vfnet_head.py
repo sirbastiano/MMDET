@@ -301,10 +301,12 @@ class VFNetHead(ATSSHead, FCOSHead):
         cls_feat = self.relu(self.vfnet_cls_dconv(cls_feat, dcn_offset))
         cls_score = self.vfnet_cls(cls_feat)
 
-        if self.training:
-            return cls_score, bbox_pred, bbox_pred_refine
-        else:
-            return cls_score, bbox_pred_refine
+        # Adjusted according to the issue: https://github.com/airctic/icevision/issues/1006
+        # if self.training:
+        #     return cls_score, bbox_pred, bbox_pred_refine
+        return cls_score, bbox_pred, bbox_pred_refine
+        # else:
+        #     return cls_score, bbox_pred_refine
 
     def star_dcn_offset(self, bbox_pred, gradient_mul, stride):
         """Compute the star deformable conv offsets.
