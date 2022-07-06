@@ -19,7 +19,7 @@ model = dict(
 
 
 # optimizer
-optimizer = dict(type='SGD', lr=0.001, momentum=0.9, weight_decay=0.0001)
+optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)
 # learning policy
 lr_config = dict(
@@ -27,5 +27,5 @@ lr_config = dict(
     warmup='linear',
     warmup_iters=500,
     warmup_ratio=0.01,
-    step=[3, 8])
-runner = dict(type='EpochBasedRunner', max_epochs=10)
+    step=[3, 8, 12, 16])
+runner = dict(type='EpochBasedRunner', max_epochs=20)

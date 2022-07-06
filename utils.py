@@ -30,20 +30,53 @@ def test(selection:str, workdir:str):
           os.system(f'python tools/test.py {config_path} {checkpoint} --work-dir {workdir} --out {outfile} --eval {eval_type}')
 
 
-def train(selection: str, workdir):
+def train(selection: str, workdir:str, extra_args=None):
      """Executes the test on the selected model.
           Input: selection -> the model selected
                  wordir -> the directory where the weights are saved
-          Outputs: epoch.h5 
+                 extra_args -> argument of training to modify the training
+          Outputs: epoch.pth
      """
+
+     def add_extra_args(args:dict):
+          if args is None:
+               return None
+          else:
+               stringa = ''     
+               for key in args:
+                    if key == 'max_epochs' and args[key] is not None:
+                         tmp = f'runner.max_epochs={args[key]}'
+                         stringa += tmp + ' '
+                    if key == 'lr' and args[key] is not None:
+                         tmp = f'optimizer.lr={args[key]}'
+                         stringa += tmp + ' '
+                    if key == 'load_from' and args[key] is not None:
+                         tmp = f'load_from={args[key]}'
+                         stringa += tmp + ' '
+                    if key == 'img_size' and args[key] is not None:
+                         tmp = f'img_size="[({args[key]},{args[key]})]"'
+                         stringa += tmp + ' '
+                    if key == 'data_root' and args[key] is not None:
+                         tmp = f'data_root={args[key]}'
+                         stringa += tmp + ' '
+                    
+
+               if stringa != '':
+                    return stringa[:-1]
+               else:
+                    return None
+
+
      config_path = selector(selection)
-     
-     MAX_TRIES = 1 # max number of training retrials
+     MAX_TRIES = 3 # max number of training retrials
      count = 0
      while count < MAX_TRIES:
           try:
-               # os.system(f'python tools/train.py {config_path} --auto-resume --seed 0')
-               os.system(f'bash tools/dist_train.sh {config_path} 1 --auto-resume --seed 0 --cfg-options work_dir={workdir}')
+               stringa = add_extra_args(extra_args)
+               if stringa is None:
+                    os.system(f'bash tools/dist_train.sh {config_path} 1 --auto-resume --seed 0 --cfg-options work_dir={workdir}')
+               else:
+                    os.system(f'bash tools/dist_train.sh {config_path} 1 --auto-resume --seed 0 --cfg-options work_dir={workdir} {stringa}')
                print("Execution succeeded.")
                print(f'Retrying... N. of trial:{count}')
                count += 1
@@ -80,7 +113,7 @@ def selector(selection):
      if selection == 'mask101':
           config_path = cwd+"/MyConfigs/Mask_RCNN_r101.py"
 
-     if selection == 'cascade':
+     if selection == 'cascade_mask50':
           config_path = cwd+"/MyConfigs/Cascade_Mask_RCNN.py"
 
      if selection == 'detr':
@@ -104,7 +137,7 @@ def selector(selection):
      if selection == 'hrnet32':
           config_path = cwd+"/MyConfigs/HrNet_w32_cascade.py"
 
-     if selection == 'hrnet40':
+     if selection == 'hrnet40_cascade':
           config_path = cwd+"/MyConfigs/HrNet_w40_cascade.py"
 
      return config_path
@@ -114,7 +147,7 @@ def plotRes(workdir:str, title:str):
      json_files = Path(workdir).glob('**/*')
      json_files = [x for x in json_files if x.suffix == '.json']
      json_files = [x for x in json_files if x.name.startswith('e')]
-     json_files=json_files.sort()
+     json_files.sort()
      Metrics = {'AP_50':[]}
      for idx in range(len(json_files)):
           df = pd.read_json(json_files[idx], encoding= 'unicode_escape', lines=True)
@@ -136,3 +169,9 @@ def getCurrentTime():
      now=now.isoformat()
      now=now.split(".")[0]
      return now
+
+
+def band_selector(band:str):
+     """Returns the current path to band dataset """
+     band_dict = {'B2':'data/DATASETS/B2','B3':'data/DATASETS/B4','B4':'data/DATASETS/B2','B8':'data/DATASETS/B2'}
+     return band_dict[band]
