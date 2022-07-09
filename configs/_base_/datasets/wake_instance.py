@@ -1,8 +1,7 @@
-###############################################################################
 # dataset settings
 dataset_type = 'CocoDataset'
 data_root = 'data/coco/'
-img_size = [(512, 512)]
+img_size = [(768, 768)]
 
 classes = ('wake',)
 img_norm_cfg = dict(
@@ -20,28 +19,21 @@ train_pipeline = [
     #     contrast_range=(0.5, 1.5),
     #     saturation_range=(0.5, 1.5),
     #     hue_delta=18),
-    dict(type='Normalize', **img_norm_cfg),
     # dict(type='Pad', size_divisor=32),
+    dict(type='Normalize', **img_norm_cfg),
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels', 'gt_masks']),
 ]
 test_pipeline = [
     dict(type='LoadImageFromFile', color_type='color'),
-    dict(
-        type='MultiScaleFlipAug',
-        img_scale=img_size,
-        flip=False,
-        transforms=[
-            dict(type='Resize', keep_ratio=False),
-            # dict(type='RandomFlip'),
-            dict(type='Normalize', **img_norm_cfg),
-            # dict(type='Pad', size_divisor=32),
-            dict(type='ImageToTensor', keys=['img']),
-            dict(type='Collect', meta_keys=('filename', 'ori_shape', 'img_shape', 'pad_shape',
-                            'flip', 'flip_direction',
-                           'img_norm_cfg','scale_factor' ),keys=['img']),
-        ])
-]
+    dict(type='Resize', img_scale=img_size, keep_ratio=False),
+    dict(type='Normalize', **img_norm_cfg),
+    dict(type='ImageToTensor', keys=['img']),
+    dict(type='Collect',
+            meta_keys=('filename', 'ori_shape', 'img_shape','scale_factor'),
+            keys=['img']),
+    dict(type='WrapFieldsToLists')
+    ]
 data = dict(
     samples_per_gpu=2,
     workers_per_gpu=2,

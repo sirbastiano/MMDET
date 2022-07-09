@@ -1,10 +1,12 @@
-import os
 import torch
 from utils import *
 from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
+import pandas as pd
+import os
+import numpy as np
 
 plt.style.use(['science','nature','no-latex'])
 
@@ -53,14 +55,11 @@ def train(selection: str, workdir:str, extra_args=None):
                     if key == 'load_from' and args[key] is not None:
                          tmp = f'load_from={args[key]}'
                          stringa += tmp + ' '
-                    if key == 'img_size' and args[key] is not None:
-                         tmp = f'img_size="[({args[key]},{args[key]})]"'
-                         stringa += tmp + ' '
                     if key == 'data_root' and args[key] is not None:
                          tmp = f'data_root={args[key]}'
                          stringa += tmp + ' '
                     
-
+               print(stringa)
                if stringa != '':
                     return stringa[:-1]
                else:
@@ -74,9 +73,9 @@ def train(selection: str, workdir:str, extra_args=None):
           try:
                stringa = add_extra_args(extra_args)
                if stringa is None:
-                    os.system(f'bash tools/dist_train.sh {config_path} 1 --auto-resume --seed 0 --cfg-options work_dir={workdir}')
+                    os.system(f'bash tools/dist_train.sh {config_path} 1 --auto-resume --seed 0 --deterministic --cfg-options work_dir={workdir}')
                else:
-                    os.system(f'bash tools/dist_train.sh {config_path} 1 --auto-resume --seed 0 --cfg-options work_dir={workdir} {stringa}')
+                    os.system(f'bash tools/dist_train.sh {config_path} 1 --auto-resume --seed 0 --deterministic --cfg-options work_dir={workdir} {stringa}')
                print("Execution succeeded.")
                print(f'Retrying... N. of trial:{count}')
                count += 1
@@ -104,8 +103,11 @@ def getListWeight(folderPath:str):
 
 
 def selector(selection):
-     if selection == 'retina':
-          config_path = cwd+"/MyConfigs/RetinaNet.py"
+     if selection == 'retina50':
+          config_path = cwd+"/MyConfigs/RetinaNet_50.py"
+
+     if selection == 'retina101':
+          config_path = cwd+"/MyConfigs/RetinaNet_101.py"    
 
      if selection == 'mask50':
           config_path = cwd+"/MyConfigs/Mask_RCNN_r50.py"
@@ -115,6 +117,9 @@ def selector(selection):
 
      if selection == 'cascade_mask50':
           config_path = cwd+"/MyConfigs/Cascade_Mask_RCNN.py"
+     
+     if selection == 'cascade_mask101':
+          config_path = cwd+"/MyConfigs/Cascade_Mask_RCNN_101.py"
 
      if selection == 'detr':
           config_path = cwd+"/MyConfigs/Detr_r50.py"
@@ -150,18 +155,22 @@ def plotRes(workdir:str, title:str):
      json_files.sort()
      Metrics = {'AP_50':[]}
      for idx in range(len(json_files)):
-          df = pd.read_json(json_files[idx], encoding= 'unicode_escape', lines=True)
-          metric = df['metric']
-          metrics = metric.to_list()[0]
-          AP50 = metrics['bbox_mAP_50']
-          Metrics['AP_50'].append(AP50)
+          try:
+               df = pd.read_json(json_files[idx], encoding= 'unicode_escape', lines=True)
+               metric = df['metric']
+               metrics = metric.to_list()[0]
+               AP50 = metrics['bbox_mAP_50']
+               Metrics['AP_50'].append(AP50)
+          except KeyError:
+               Metrics['AP_50'].append(0)
+
      plt.figure(dpi=300)
      plt.plot(Metrics['AP_50'])
      plt.xlabel('Epoch')
      plt.title(title +' ' + str(max(Metrics['AP_50'])))
      plt.ylabel('$mAP_{50}$')
      plt.savefig(f'{workdir}/{title}.png')
-     plt.show()
+     plt.show(block=False)
 
 def getCurrentTime():
      """Returns the current time as a string """
@@ -173,5 +182,56 @@ def getCurrentTime():
 
 def band_selector(band:str):
      """Returns the current path to band dataset """
-     band_dict = {'B2':'data/DATASETS/B2','B3':'data/DATASETS/B4','B4':'data/DATASETS/B2','B8':'data/DATASETS/B2'}
+     band_dict = {'B2':'data/DATASETS/B2','B3':'data/DATASETS/B3','B4':'data/DATASETS/B4','B8':'data/DATASETS/B8'}
      return band_dict[band]
+
+def plotAll(directory:str):
+     folders = Path(directory).glob('**/*')
+     folders = [x for x in folders if x.is_dir() and not x.name.startswith('B')]
+     print(folders)
+     for folder in folders:
+          try:
+               workdir = folder.as_posix()
+               plotRes(workdir, title=folder.name)
+          except:
+               print(f'Skipping {workdir}')
+
+
+def keepGoodWeight(directory:str):
+     """Function that deletes the weigths base on the max_AP scored."""
+     w_paths = Path(directory).glob('**/*')
+     w_paths = [x for x in w_paths if x.is_file() and x.name.endswith('.pth')] 
+     
+     json_paths = Path(directory).glob('**/*')
+     json_paths = [y for y in json_paths if y.is_file() and y.name.startswith('eval')] 
+     json_paths.sort()
+
+     Metrics = {'AP_50':[]}
+     for idx in range(len(json_paths)):
+          try:
+               df = pd.read_json(json_paths[idx], encoding= 'unicode_escape', lines=True)
+               metric = df['metric']
+               metrics = metric.to_list()[0]
+               AP50 = metrics['bbox_mAP_50']
+               Metrics['AP_50'].append(AP50)
+          except KeyError:     
+               Metrics['AP_50'].append(0)
+
+     
+     print(np.argmax(Metrics['AP_50']))
+     save = np.argmax(Metrics['AP_50'])
+     print(np.max(Metrics['AP_50']))
+     print(Metrics['AP_50'])
+
+     # delete weights not necessary
+     for w in w_paths:
+          if w.stem.endswith(str(np.argmax(Metrics['AP_50'])+1)):
+               print(f'found, at {w.name}')
+          else:
+               os.remove(w)
+     
+     # delete savings:
+     pkl_paths = Path(directory).glob('**/*')
+     pkl_paths = [y for y in pkl_paths if y.is_file() and y.name.startswith('saving')]
+     for p in pkl_paths:
+          os.remove(p)

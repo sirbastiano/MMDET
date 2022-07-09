@@ -1,17 +1,11 @@
 # dataset settings
 dataset_type = 'CocoDataset'
 data_root = 'data/coco/'
-img_size = [(300, 300),(1000, 1000)]
-
-
-img_norm_cfg = dict(
-    mean=[128, 128, 128], std=[70, 70, 70], to_rgb=True)
-
-# img_norm_cfg = dict(
-#     mean=128, std=70)
+img_size = [(768, 768)]
 
 classes = ('wake',)
-
+img_norm_cfg = dict(
+    mean=[128, 128, 128], std=[70, 70, 70], to_rgb=True)
 train_pipeline = [
     dict(type='LoadImageFromFile', color_type='color'),
     dict(type='LoadAnnotations', with_bbox=True),
@@ -19,32 +13,31 @@ train_pipeline = [
     dict(type='RandomFlip', flip_ratio=0.5, direction='horizontal'),
     dict(type='RandomFlip', flip_ratio=0.5, direction='vertical'),
     dict(type='RandomFlip', flip_ratio=0.5, direction='diagonal'),
-    dict(type='Normalize', **img_norm_cfg),
+    # dict(
+    #     type='PhotoMetricDistortion',
+    #     brightness_delta=32,
+    #     contrast_range=(0.5, 1.5),
+    #     saturation_range=(0.5, 1.5),
+    #     hue_delta=18),
     # dict(type='Pad', size_divisor=32),
+    dict(type='Normalize', **img_norm_cfg),
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels']),
 ]
 test_pipeline = [
     dict(type='LoadImageFromFile', color_type='color'),
-    dict(
-        type='MultiScaleFlipAug',
-        img_scale=img_size,
-        flip=False,
-        transforms=[
-            dict(type='Resize', keep_ratio=False),
-            # dict(type='RandomFlip'),
-            dict(type='Normalize', **img_norm_cfg),
-            # dict(type='Pad', size_divisor=32),
-            dict(type='ImageToTensor', keys=['img']),
-            dict(type='Collect',
-                meta_keys=('filename', 'ori_shape', 'img_shape'),
-                        keys=['img']),
-        ])
-]
+    dict(type='Resize', img_scale=img_size, keep_ratio=False),
+    dict(type='Normalize', **img_norm_cfg),
+    dict(type='ImageToTensor', keys=['img']),
+    dict(type='Collect',
+            meta_keys=('filename', 'ori_shape', 'img_shape','scale_factor'),
+            keys=['img']),
+    dict(type='WrapFieldsToLists')
+    ]
 
 data = dict(
-    samples_per_gpu=1,
-    workers_per_gpu=1,
+    samples_per_gpu=2,
+    workers_per_gpu=2,
     train=dict(
         type=dataset_type,
         classes=classes,
@@ -65,4 +58,4 @@ data = dict(
         pipeline=test_pipeline))
 
 
-evaluation = dict(interval=100, metric='bbox')
+evaluation = dict(interval=1000, metric='bbox')
