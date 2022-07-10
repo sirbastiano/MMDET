@@ -14,11 +14,12 @@ torch.cuda.empty_cache()
 os.system('clear')
 cwd = os.getcwd()
 
-models = ['retina50','retina101','mask50','mask101','cascade_mask50',
+models = ['retina18','retina50','retina101','mask50','mask101','cascade_mask50','cascade_mask101',
           'detr','centripetalnet','vfnet','efficientdet','sparce_rcnn',
           'hrnet40_cascade',]
 
-bands = ['B2','B3','B4','B8']
+# bands = ['B2','B3','B4','B8']
+bands = ['B2']
 
 if __name__ == '__main__':
      # Select Model and specify if to train and test
@@ -27,11 +28,11 @@ if __name__ == '__main__':
      # Hyper-Parameters:
      max_epochs = 50
      # band = 'B2'
-     for selection in ['retina50','retina101','mask50','mask101','cascade_mask50']:
+     for selection in ['retina18','cascade_mask50','cascade_mask101','mask50']:
           for band in bands:
                lr = 0.001
                load_from = None
-               img_size=712
+               img_size=712 # Specify in the dataset
                data_root = band_selector(band)
 
                workdir = f'checkpoints/{band}/{selection}/{selection}_'+getCurrentTime()+f'_{img_size}_{max_epochs}e_{band}_lr_{lr}'

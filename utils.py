@@ -103,6 +103,9 @@ def getListWeight(folderPath:str):
 
 
 def selector(selection):
+     if selection == 'retina18':
+          config_path = cwd+"/MyConfigs/RetinaNet_18.py"
+
      if selection == 'retina50':
           config_path = cwd+"/MyConfigs/RetinaNet_50.py"
 
