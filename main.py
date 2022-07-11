@@ -26,17 +26,18 @@ if __name__ == '__main__':
      train_bool = True
      test_bool = True
      # Hyper-Parameters:
-     max_epochs = 50
+     max_epochs = 100
      # band = 'B2'
-     for selection in ['retina18','cascade_mask50','cascade_mask101','mask50']:
+     for selection in ['retina18']:
           for band in bands:
-               lr = 0.001
-               load_from = None
-               img_size=712 # Specify in the dataset
+               lr = 0.001 * 0.5 
+               lr_schedule = 'CosineAnnealing' # "CosineAnnealing" or "linear"
+               load_from = "checkpoints/B2/retina18/retina18_2022-07-11T19:19:53_768_20e_B2_lr_0.0005_Cosine/epoch_20.pth"
+               img_size=768 # Specify in the dataset, here won't be collected
                data_root = band_selector(band)
 
-               workdir = f'checkpoints/{band}/{selection}/{selection}_'+getCurrentTime()+f'_{img_size}_{max_epochs}e_{band}_lr_{lr}'
-               extra_args = {'max_epochs':max_epochs, 'lr':lr, 'load_from':load_from, 
+               workdir = f'checkpoints/{band}/{selection}/{selection}_'+getCurrentTime()+f'_{img_size}_{max_epochs}e_{band}_lr_{lr}_Cosine'
+               extra_args = {'max_epochs':max_epochs, 'lr':lr, 'load_from':load_from, 'lr_cfg':lr_schedule,
                               'data_root':data_root}
                # extra_args = None # Pass None to use default values.
 

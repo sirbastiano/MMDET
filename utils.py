@@ -46,18 +46,33 @@ def train(selection: str, workdir:str, extra_args=None):
           else:
                stringa = ''     
                for key in args:
+                    ####### MAX EPOCHS ########
                     if key == 'max_epochs' and args[key] is not None:
+                         MAX_EPOCHS = int(args[key])
                          tmp = f'runner.max_epochs={args[key]}'
                          stringa += tmp + ' '
+                    ####### SET LEARNING RATE ########
                     if key == 'lr' and args[key] is not None:
                          tmp = f'optimizer.lr={args[key]}'
                          stringa += tmp + ' '
+                    ####### LOAD CHECKPOINT ########
                     if key == 'load_from' and args[key] is not None:
                          tmp = f'load_from={args[key]}'
                          stringa += tmp + ' '
+                    ####### WORKDIR ########
                     if key == 'data_root' and args[key] is not None:
                          tmp = f'data_root={args[key]}'
                          stringa += tmp + ' '
+                    ####### LEARNING RATE SCHEDULER ########
+                    if key == 'lr_cfg' and args[key] is not None:
+                         # Cosinge Annealing Lr Schedule
+                         if args[key] == 'CosineAnnealing':
+                              tmp = f'lr_config.policy={args[key]} lr_config.min_lr=0'
+                              stringa += tmp + ' '
+                         elif args[key] == 'linear':
+                              tmp = f'lr_config.policy={args[key]} lr_config.step="[{MAX_EPOCHS//2},{MAX_EPOCHS//4},{MAX_EPOCHS//8}]"'
+                              stringa += tmp + ' '
+
                     
                print(stringa)
                if stringa != '':

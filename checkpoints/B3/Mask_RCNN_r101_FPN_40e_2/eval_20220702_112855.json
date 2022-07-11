@@ -1,0 +1,1 @@
+{"config": "/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/MyConfigs/Mask_RCNN_r101.py", "metric": {"bbox_mAP": 0.383, "bbox_mAP_50": 0.776, "bbox_mAP_75": 0.313, "bbox_mAP_s": -1.0, "bbox_mAP_m": 0.579, "bbox_mAP_l": 0.37, "bbox_mAP_copypaste": "0.383 0.776 0.313 -1.000 0.579 0.370"}}

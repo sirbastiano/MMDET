@@ -7,7 +7,6 @@ _base_ = ["_base_/datasets/wake_detection.py",    #dataset
 
 _base_ = [home+x for x in _base_]
 
-optimizer = dict(type='SGD', lr=0.0001, momentum=0.9, weight_decay=0.0001)
 
 model = dict(
     type='RetinaNet',

@@ -1,0 +1,1 @@
+{"config": "/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/MyConfigs/RetinaNet_18.py", "metric": {"bbox_mAP": 0.007, "bbox_mAP_50": 0.029, "bbox_mAP_75": 0.0, "bbox_mAP_s": -1.0, "bbox_mAP_m": 0.041, "bbox_mAP_l": 0.007, "bbox_mAP_copypaste": "0.007 0.029 0.000 -1.000 0.041 0.007"}}

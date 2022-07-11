@@ -1,0 +1,1 @@
+{"config": "/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/MyConfigs/Cascade_Mask_RCNN_101.py", "metric": {"bbox_mAP": 0.321, "bbox_mAP_50": 0.689, "bbox_mAP_75": 0.247, "bbox_mAP_s": -1.0, "bbox_mAP_m": 0.476, "bbox_mAP_l": 0.309, "bbox_mAP_copypaste": "0.321 0.689 0.247 -1.000 0.476 0.309"}}
