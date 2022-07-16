@@ -109,8 +109,9 @@ data
 .vscode
 .idea
 .DS_Store
-
 # custom
+*.png
+*.json
 *.pkl
 *.pkl.json
 *.log.json
@@ -124,3 +125,4 @@ work_dirs/
 *.pth
 *.py~
 *.sh~
+*.0

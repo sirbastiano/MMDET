@@ -1,11 +1,11 @@
+home = "/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/configs/"
 
-home_path = "/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/configs/Baseline/"
+_base_ = ["_base_/datasets/wake_detection.py",    #dataset
+        "_base_/schedules/schedule_40e.py",    #schedules
+        '/_base_/default_runtime.py'
+        ]
 
-_base_ = ["_base_/datasets/wake_detection_sparce_rcnn.py",    #dataset
-     '_base_/schedules/schedule_100e.py', 
-     '_base_/default_runtime.py',]
-
-_base_ = [home_path+x for x in _base_]
+_base_ = [home+x for x in _base_]
 
 num_stages = 6
 num_proposals = 100

@@ -15,8 +15,8 @@ os.system('clear')
 cwd = os.getcwd()
 
 models = ['retina18','retina50','retina101','mask50','mask101','cascade_mask50','cascade_mask101',
-          'detr','centripetalnet','vfnet','efficientdet','sparce_rcnn',
-          'hrnet40_cascade',]
+          'detr','centripetalnet','vfnet','efficientdet','sparce_rcnn50',
+          'hrnet40_cascade','ssd_vgg16','fovea50']
 
 # bands = ['B2','B3','B4','B8']
 bands = ['B2']
@@ -26,20 +26,19 @@ if __name__ == '__main__':
      train_bool = True
      test_bool = True
      # Hyper-Parameters:
-     max_epochs = 100
+     max_epochs = 50
      # band = 'B2'
-     for selection in ['retina18']:
+     for selection in ['fovea50','sparce_rcnn50','efficientdet','hrnet40_cascade']:
           for band in bands:
-               lr = 0.001 * 0.5 
-               lr_schedule = 'CosineAnnealing' # "CosineAnnealing" or "linear"
-               load_from = "checkpoints/B2/retina18/retina18_2022-07-11T19:19:53_768_20e_B2_lr_0.0005_Cosine/epoch_20.pth"
-               img_size=768 # Specify in the dataset, here won't be collected
+               lr = 0.001
+               lr_schedule = 'CosineAnnealing' # "CosineAnnealing" or "step"
+               load_from = None
+               img_size=768 # Specify in the dataset, here won't be collected!
                data_root = band_selector(band)
 
-               workdir = f'checkpoints/{band}/{selection}/{selection}_'+getCurrentTime()+f'_{img_size}_{max_epochs}e_{band}_lr_{lr}_Cosine'
+               workdir = f'checkpoints/{band}/{selection}/{selection}_'+getCurrentTime()+f'_{img_size}_{max_epochs}e_{band}_lr_{lr}_{lr_schedule}'
                extra_args = {'max_epochs':max_epochs, 'lr':lr, 'load_from':load_from, 'lr_cfg':lr_schedule,
-                              'data_root':data_root}
-               # extra_args = None # Pass None to use default values.
+                              'data_root':data_root} # extra_args = None # None to use default values.
 
 
                if train_bool:
@@ -51,4 +50,4 @@ if __name__ == '__main__':
                keepGoodWeight(workdir)
 
 
-
+ 

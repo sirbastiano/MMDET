@@ -69,8 +69,8 @@ def train(selection: str, workdir:str, extra_args=None):
                          if args[key] == 'CosineAnnealing':
                               tmp = f'lr_config.policy={args[key]} lr_config.min_lr=0'
                               stringa += tmp + ' '
-                         elif args[key] == 'linear':
-                              tmp = f'lr_config.policy={args[key]} lr_config.step="[{MAX_EPOCHS//2},{MAX_EPOCHS//4},{MAX_EPOCHS//8}]"'
+                         elif args[key] == 'step':
+                              tmp = f'lr_config.policy={args[key]} lr_config.step="[{(MAX_EPOCHS*2)//3},{(MAX_EPOCHS*8)//9}]"'
                               stringa += tmp + ' '
 
                     
@@ -118,6 +118,9 @@ def getListWeight(folderPath:str):
 
 
 def selector(selection):
+     if selection == 'ssd_vgg16':
+          config_path = cwd+"/MyConfigs/ssd_vgg.py"
+
      if selection == 'retina18':
           config_path = cwd+"/MyConfigs/RetinaNet_18.py"
 
@@ -151,7 +154,7 @@ def selector(selection):
      if selection == 'efficientdet':
           config_path = cwd+'/MyConfigs/retinanet_effb3_fpn_crop896_8x4_1x_coco.py'
      
-     if selection == 'sparce_rcnn':
+     if selection == 'sparce_rcnn50':
           config_path = cwd+"/MyConfigs/sparce_rcnn.py"
 
      if selection == 'yolov3':
@@ -162,6 +165,9 @@ def selector(selection):
 
      if selection == 'hrnet40_cascade':
           config_path = cwd+"/MyConfigs/HrNet_w40_cascade.py"
+
+     if selection == 'fovea50':
+          config_path = cwd+"/MyConfigs/fovea_r50_fpn_4x4_1x_coco.py"
 
      return config_path
 

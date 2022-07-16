@@ -1,10 +1,10 @@
-# the new config inherits the base configs to highlight the necessary modification
 home = "/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/configs/"
-_base_ = ['_base_/models/mask_rcnn_r50_fpn.py',#modello
-        "_base_/datasets/wake_instance.py",    #dataset
+
+_base_ = ["_base_/datasets/wake_detection.py",    #dataset
         "_base_/schedules/schedule_40e.py",    #schedules
         '/_base_/default_runtime.py'
         ]
+
 _base_ = [home+x for x in _base_]
 # model settings
 input_size = 300

@@ -1,18 +1,13 @@
 home = "/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/configs/"
-
 _base_ = ["_base_/datasets/wake_detection.py",    #dataset
         "_base_/schedules/schedule_40e.py",    #schedules
         '/_base_/default_runtime.py'
         ]
-
 _base_ = [home+x for x in _base_]
-
-
 # model settings
 model = dict(
-    type='VFNet',
+    type='FOVEA',
     backbone=dict(
-        with_cp=True,
         type='ResNet',
         depth=50,
         num_stages=4,
@@ -27,42 +22,33 @@ model = dict(
         in_channels=[256, 512, 1024, 2048],
         out_channels=256,
         start_level=1,
-        add_extra_convs='on_output',  # use P5
         num_outs=5,
-        relu_before_extra_convs=True),
+        add_extra_convs='on_input'),
     bbox_head=dict(
-        type='VFNetHead',
+        type='FoveaHead',
         num_classes=1,
         in_channels=256,
-        stacked_convs=3,
+        stacked_convs=4,
         feat_channels=256,
         strides=[8, 16, 32, 64, 128],
-        center_sampling=False,
-        dcn_on_last_conv=False,
-        use_atss=True,
-        use_vfl=True,
+        base_edge_list=[16, 32, 64, 128, 256],
+        scale_ranges=((1, 64), (32, 128), (64, 256), (128, 512), (256, 2048)),
+        sigma=0.4,
+        with_deform=False,
         loss_cls=dict(
-            type='VarifocalLoss',
+            type='FocalLoss',
             use_sigmoid=True,
-            alpha=0.75,
-            gamma=2.0,
-            iou_weighted=True,
+            gamma=1.50,
+            alpha=0.4,
             loss_weight=1.0),
-        loss_bbox=dict(type='GIoULoss', loss_weight=1.5),
-        loss_bbox_refine=dict(type='GIoULoss', loss_weight=2.0)),
+        loss_bbox=dict(type='SmoothL1Loss', beta=0.11, loss_weight=1.0)),
     # training and testing settings
-    train_cfg=dict(
-        assigner=dict(type='ATSSAssigner', topk=9),
-        allowed_border=-1,
-        pos_weight=-1,
-        debug=False),
+    train_cfg=dict(),
     test_cfg=dict(
         nms_pre=1000,
-        min_bbox_size=0,
         score_thr=0.05,
-        nms=dict(type='nms', iou_threshold=0.6),
+        nms=dict(type='nms', iou_threshold=0.5),
         max_per_img=100))
-
-
-
-work_dir = 'checkpoints/VFNET_r50_40e'  # Directory to save the model checkpoints and logs for the current experiments.
+data = dict(samples_per_gpu=4, workers_per_gpu=4)
+# optimizer
+optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)

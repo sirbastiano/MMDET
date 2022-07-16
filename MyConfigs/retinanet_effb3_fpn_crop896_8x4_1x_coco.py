@@ -8,7 +8,7 @@
 
 # _base_ = [home_path+x for x in _base_]
 
-_base_ = '/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/configs/MyBaselines/RetinaNet.py'
+_base_ = '/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/MyConfigs/RetinaNet_18.py'
 optimizer = dict(type='SGD', lr=0.0001, momentum=0.9, weight_decay=0.0001)
 
 cudnn_benchmark = True
@@ -40,6 +40,9 @@ model = dict(
 
 work_dir = 'checkpoints/RetinaNet_effb3_FPN_40e'  # Directory to save the model checkpoints and logs for the current experiments.
 
+data = dict(
+    samples_per_gpu=1,
+    workers_per_gpu=1,)
 # # dataset settings
 # img_norm_cfg = dict(
 #     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)

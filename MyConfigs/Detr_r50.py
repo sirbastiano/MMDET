@@ -1,13 +1,12 @@
-home_path = '/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/configs/Baseline/'
+home = "/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/configs/"
 
-_base_ = [
-    # '_base_/models/retinanet_r50_fpn.py',
-    '_base_/datasets/wake_detection_DETR.py',
-    '_base_/schedules/schedule_DETR.py', 
-    '_base_/default_runtime.py',
-]
+_base_ = ["_base_/datasets/wake_detection_DETR.py",    #dataset
+        "_base_/schedules/schedule_40e.py",    #schedules: schedule_DETR.py'
+        '/_base_/default_runtime.py'
+        ]
 
-_base_ = [home_path+x for x in _base_]
+_base_ = [home+x for x in _base_]
+
 
 img_norm_cfg = dict(
     mean=[128, 128, 128], std=[70, 70, 70], to_rgb=True)
