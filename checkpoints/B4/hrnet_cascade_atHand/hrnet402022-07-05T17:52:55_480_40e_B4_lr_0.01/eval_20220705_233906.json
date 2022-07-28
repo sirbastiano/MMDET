@@ -1,1 +1,0 @@
-{"config": "/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/MyConfigs/HrNet_w40_cascade.py", "metric": {"bbox_mAP": 0.193, "bbox_mAP_50": 0.435, "bbox_mAP_75": 0.139, "bbox_mAP_s": -1.0, "bbox_mAP_m": 0.394, "bbox_mAP_l": 0.176, "bbox_mAP_copypaste": "0.193 0.435 0.139 -1.000 0.394 0.176"}}

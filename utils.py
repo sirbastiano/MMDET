@@ -15,13 +15,16 @@ torch.cuda.empty_cache()
 os.system('clear')
 cwd = os.getcwd()
 
-def test(selection:str, workdir:str):
+def test(workdir:str):
      """Executes the test on the selected model.
           Input: selection -> the model selected
                  wordir -> the directory where the weights are stored
           Outputs: saving.pkl and json evals of the model
      """
-     config_path = selector(selection)
+
+     config_file_path = [x for x in Path(workdir).glob('**/*.py')]
+     assert len(config_file_path) == 1, 'Check configuration files'
+     config_path = config_file_path[0]
 
      weights = getListWeight(workdir)
      for idx, checkpoint in enumerate(weights):
@@ -61,7 +64,9 @@ def train(selection: str, workdir:str, extra_args=None):
                          stringa += tmp + ' '
                     ####### WORKDIR ########
                     if key == 'data_root' and args[key] is not None:
-                         tmp = f'data_root={args[key]}'
+                         tmp = f'data.train.ann_file={args[key]}/annotations/instances_train2017.json data.train.img_prefix={args[key]}/train2017/ '
+                         tmp += f'data.val.ann_file={args[key]}/annotations/instances_val2017.json data.val.img_prefix={args[key]}/val2017/ '
+                         tmp += f'data.test.ann_file={args[key]}/annotations/instances_val2017.json data.test.img_prefix={args[key]}/val2017/'
                          stringa += tmp + ' '
                     ####### LEARNING RATE SCHEDULER ########
                     if key == 'lr_cfg' and args[key] is not None:
@@ -82,7 +87,7 @@ def train(selection: str, workdir:str, extra_args=None):
 
 
      config_path = selector(selection)
-     MAX_TRIES = 3 # max number of training retrials
+     MAX_TRIES = 5 # max number of training retrials
      count = 0
      while count < MAX_TRIES:
           try:
@@ -120,12 +125,39 @@ def getListWeight(folderPath:str):
 def selector(selection):
      if selection == 'ssd_vgg16':
           config_path = cwd+"/MyConfigs/ssd_vgg.py"
+     
+     if selection == 'fsaf50':
+          config_path = cwd+"/MyConfigs/fsaf_r50_fpn_1x_coco.py"
+     
+     if selection == 'fcos50':
+          config_path = cwd+"/MyConfigs/fcos_r50_caffe_fpn_gn-head_1x_coco.py"
 
+     if selection == 'faster50':
+          config_path = cwd+"/MyConfigs/faster_rcnn_r50_fpn.py"
+     
+     if selection == 'htc50':
+          config_path = cwd+"/MyConfigs/htc_without_semantic_r50_fpn_1x_coco.py"
+
+     if selection == 'htc101':
+          config_path = cwd+"/MyConfigs/htc_without_semantic_r50_fpn_1x_coco.py"
+     
+     if selection == 'tridentnet50':
+          config_path = cwd+"/MyConfigs/tridentnet_r50_caffe_1x_coco.py"
+     
      if selection == 'retina18':
           config_path = cwd+"/MyConfigs/RetinaNet_18.py"
-
+     
+     if selection == 'retina34':
+          config_path = cwd+"/MyConfigs/RetinaNet_34.py"
+     
      if selection == 'retina50':
           config_path = cwd+"/MyConfigs/RetinaNet_50.py"
+
+     if selection == 'retina_swin':
+          config_path = cwd+"/MyConfigs/retinanet_swin-t-p4-w7_fpn_1x_coco.py"
+
+     if selection == 'retina50_timm':
+          config_path = cwd+"/MyConfigs/RetinaNet_r50_timm.py"
 
      if selection == 'retina101':
           config_path = cwd+"/MyConfigs/RetinaNet_101.py"    
@@ -168,6 +200,12 @@ def selector(selection):
 
      if selection == 'fovea50':
           config_path = cwd+"/MyConfigs/fovea_r50_fpn_4x4_1x_coco.py"
+
+     if selection == 'fovea101':
+          config_path = cwd+"/MyConfigs/fovea_r101_fpn_4x4_1x_coco.py"
+
+     if selection == 'centernet18':
+          config_path = cwd+"/MyConfigs/centernet_resnet18_dcnv2.py"
 
      return config_path
 

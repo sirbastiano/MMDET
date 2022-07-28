@@ -1,10 +1,7 @@
 home = "/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/configs/"
-
 _base_ = ["_base_/datasets/wake_detection.py",    #dataset
         "_base_/schedules/schedule_40e.py",    #schedules
-        '/_base_/default_runtime.py'
-        ]
-
+        '/_base_/default_runtime.py']
 _base_ = [home+x for x in _base_]
 
 

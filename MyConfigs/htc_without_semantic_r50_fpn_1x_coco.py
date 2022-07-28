@@ -1,13 +1,9 @@
-home_path = '/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/configs/Baseline/'
+home = "/home/sirbastiano/Documenti/Scripts/MMDETv2/mmdetection/configs/"
+_base_ = ["_base_/datasets/wake_instance.py",    #dataset
+        "_base_/schedules/schedule_40e.py",    #schedules
+        '/_base_/default_runtime.py']
+_base_ = [home+x for x in _base_]
 
-_base_ = [
-    # '_base_/models/retinanet_r50_fpn.py',
-    '_base_/datasets/wake_instance.py',
-    '_base_/schedules/schedule_40e.py', 
-    '_base_/default_runtime.py',
-]
-
-_base_ = [home_path+x for x in _base_]
 # model settings
 model = dict(
     type='HybridTaskCascade',
@@ -222,22 +218,28 @@ model = dict(
             nms=dict(type='nms', iou_threshold=0.5),
             max_per_img=100,
             mask_thr_binary=0.5)))
-img_norm_cfg = dict(
-    mean=[128, 128, 128], std=[70, 70, 70], to_rgb=True)
-test_pipeline = [
-    dict(type='LoadImageFromFile', color_type='color'),
-    dict(
-        type='MultiScaleFlipAug',
-        img_scale=(1333, 800),
-        flip=False,
-        transforms=[
-            dict(type='Resize', keep_ratio=True),
-            dict(type='RandomFlip', flip_ratio=0.5),
-            dict(type='Normalize', **img_norm_cfg),
-            dict(type='Pad', size_divisor=32),
-            dict(type='ImageToTensor', keys=['img']),
-            dict(type='Collect', keys=['img']),
-        ])
-]
+
+# dataset settings
 data = dict(
-    val=dict(pipeline=test_pipeline), test=dict(pipeline=test_pipeline))
+    test=dict(
+        pipeline=[
+            dict(type='LoadImageFromFile', color_type='color'),
+            dict(type='Resize', img_scale=[(768, 768)], keep_ratio=False),
+            dict(type='RandomFlip', flip_ratio=0., direction='horizontal'),
+            dict(
+                type='Normalize',
+                mean=[128, 128, 128],
+                std=[70, 70, 70],
+                to_rgb=True),
+            dict(type='ImageToTensor', keys=['img']),
+            dict(
+                type='Collect',
+                meta_keys=('filename', 'ori_shape', 'img_shape',
+                           'scale_factor','flip'),
+                keys=['img']),
+            dict(type='WrapFieldsToLists')
+        ]
+    )
+)
+
+
