@@ -19,7 +19,7 @@ models = ['retina18','retina50','retina101','mask50','mask101','cascade_mask50',
           'hrnet40_cascade','ssd_vgg16','fovea50','fovea101','centernet18','tridentnet50','fsaf50',
           'retina50_timm','retina_swin']
 
-bands = ['B8'] # bands = ['B2','B3','B4','B8']
+bands = ['B2','B3','B4','B8'] # bands = ['B2','B3','B4','B8']
 
 if __name__ == '__main__':
      # Select Model and specify if to train and test
@@ -27,7 +27,7 @@ if __name__ == '__main__':
      test_bool = True
      # Hyper-Parameters:
      max_epochs = 50
-     for selection in ['retina_swin']:
+     for selection in ['mask50','htc50','retina18','centernet18']:
           for band in bands:
                lr = 0.001
                # lr_schedule = 'CosineAnnealing' # "CosineAnnealing" or "step"
