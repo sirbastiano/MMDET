@@ -27,26 +27,29 @@ if __name__ == '__main__':
      test_bool = True
      # Hyper-Parameters:
      max_epochs = 50
-     for selection in ['mask50','htc50','retina18','centernet18']:
+     for selection in ['retina50','retina101','mask101','cascade_mask50','cascade_mask101']:
           for band in bands:
                lr = 0.001
-               # lr_schedule = 'CosineAnnealing' # "CosineAnnealing" or "step"
-               for lr_schedule in ['step',]:
-                    load_from = None
-                    img_size=768 # Specify in the dataset, here won't be collected!
-                    data_root = band_selector(band)
+               for scaler in [0.5, 1, 2]:
+                    lr *= scaler
+                    max_epochs /= scaler
+                    # lr_schedule = 'CosineAnnealing' # "CosineAnnealing" or "step"
+                    for lr_schedule in ['step','CosineAnnealing']:
+                         load_from = None
+                         img_size=768 # Specify in the dataset, here won't be collected!
+                         data_root = band_selector(band)
 
-                    workdir = f'checkpoints/{band}/{selection}/{selection}_'+getCurrentTime()+f'_{img_size}_{max_epochs}e_{band}_lr_{lr}_{lr_schedule}'
-                    extra_args = {'max_epochs':max_epochs, 'lr':lr, 'load_from':load_from, 'lr_cfg':lr_schedule,
-                                   'data_root':data_root} # extra_args = None # None to use default values.
+                         workdir = f'checkpoints/{band}/{selection}/{selection}_'+getCurrentTime()+f'_{img_size}_{max_epochs}e_{band}_lr_{lr}_{lr_schedule}'
+                         extra_args = {'max_epochs':max_epochs, 'lr':lr, 'load_from':load_from, 'lr_cfg':lr_schedule,
+                                        'data_root':data_root} # extra_args = None # None to use default values.
 
 
-                    if train_bool:
-                         train(selection=selection, workdir=workdir, extra_args=extra_args)
-                    if test_bool:
-                         # workdir = 'checkpoints/B3/cascade_mask50/cascade_mask50_2022-07-28T11:01:26_768_50e_B3_lr_0.001_step'
-                         test(workdir=workdir)
-                    
-                    plotRes(workdir, title=selection+f'_{band}_')
-                    keepGoodWeight(workdir)
+                         if train_bool:
+                              train(selection=selection, workdir=workdir, extra_args=extra_args)
+                         if test_bool:
+                              # workdir = 'checkpoints/B2/retina50/retina50_2022-08-01T13:07:36_768_50e_B2_lr_0.001_step'
+                              test(workdir=workdir)
+                         
+                         plotRes(workdir, title=selection+f'_{band}_')
+                         keepGoodWeight(workdir)
 

@@ -19,7 +19,7 @@ models = ['retina18','retina50','retina101','mask50','mask101','cascade_mask50',
           'hrnet40_cascade','ssd_vgg16','fovea50','fovea101','centernet18','tridentnet50','fsaf50',
           'retina50_timm','retina_swin']
 
-bands = ['B8'] # bands = ['B2','B3','B4','B8']
+bands = ['Crateri'] # bands = ['B2','B3','B4','B8']
 
 if __name__ == '__main__':
      # Select Model and specify if to train and test
@@ -27,7 +27,7 @@ if __name__ == '__main__':
      test_bool = True
      # Hyper-Parameters:
      max_epochs = 25
-     for selection in ['retina_swin','fovea50','retina18','fcos50','centripetalnet']:
+     for selection in ['retina18','retina_swin','fovea50','fcos50','centripetalnet']:
           for band in bands:
                lr = 0.002
                for scaler in [0.5,1,2]:
@@ -37,7 +37,7 @@ if __name__ == '__main__':
                     for lr_schedule in ['step','CosineAnnealing']:
                          load_from = None
                          img_size=768 # Specify in the dataset, here won't be collected!
-                         data_root = band_selector(band)
+                         data_root = "data/DATASETS/Craters"
 
                          workdir = f'checkpoints/{band}/{selection}/{selection}_'+getCurrentTime()+f'_{img_size}_{max_epochs}e_{band}_lr_{lr}_{lr_schedule}'
                          extra_args = {'max_epochs':max_epochs, 'lr':lr, 'load_from':load_from, 'lr_cfg':lr_schedule,
