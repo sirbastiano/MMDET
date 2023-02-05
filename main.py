@@ -19,6 +19,7 @@ models = ['retina18','retina50','retina101','mask50','mask101','cascade_mask50',
           'hrnet40_cascade','ssd_vgg16','fovea50','fovea101','centernet18','tridentnet50','fsaf50',
           'retina50_timm','retina_swin']
 
+classes = ('wake',)
 bands = ['B8'] # bands = ['B2','B3','B4','B8']
 
 if __name__ == '__main__':
@@ -41,7 +42,7 @@ if __name__ == '__main__':
 
                          workdir = f'checkpoints/{band}/{selection}/{selection}_'+getCurrentTime()+f'_{img_size}_{max_epochs}e_{band}_lr_{lr}_{lr_schedule}'
                          extra_args = {'max_epochs':max_epochs, 'lr':lr, 'load_from':load_from, 'lr_cfg':lr_schedule,
-                                        'data_root':data_root} # extra_args = None # None to use default values.
+                                        'data_root':data_root, 'classes':None} # extra_args = None # None to use default values.
 
 
                          if train_bool:

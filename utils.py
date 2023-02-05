@@ -68,6 +68,12 @@ def train(selection: str, workdir:str, extra_args=None):
                          tmp += f'data.val.ann_file={args[key]}/annotations/instances_val2017.json data.val.img_prefix={args[key]}/val2017/ '
                          tmp += f'data.test.ann_file={args[key]}/annotations/instances_val2017.json data.test.img_prefix={args[key]}/val2017/'
                          stringa += tmp + ' '
+                    ####### WORKDIR ########
+                    if key == 'classes' and args[key] is not None:
+                         tmp = f'data.train.classes="{args[key]}" '
+                         tmp += f'data.val.classes="{args[key]}" '
+                         tmp += f'data.test.classes="{args[key]}"'
+                         stringa += tmp + ' '
                     ####### LEARNING RATE SCHEDULER ########
                     if key == 'lr_cfg' and args[key] is not None:
                          # Cosinge Annealing Lr Schedule
