@@ -29,7 +29,7 @@ if __name__ == '__main__':
      test_bool = True
      # Hyper-Parameters:
      # max_epochs = 25
-     for selection in ['vfnet','efficientdet','centernet18','tridentnet50','htc50','htc101','retina_swin']:
+     for selection in ['retina50','retina101','hrnet40_cascade','ssd_vgg16'   ]:
           for dataset in Dataselector:
                for lr, max_epochs in zip([0.002,0.0015,0.0005],[25,50,75]):
                     for lr_schedule in ['step','CosineAnnealing']: # "CosineAnnealing" or "step"

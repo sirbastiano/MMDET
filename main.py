@@ -28,7 +28,7 @@ if __name__ == '__main__':
      test_bool = True
      # Hyper-Parameters:
      max_epochs = 25
-     for selection in ['retina_swin','fovea50','retina18','fcos50','centripetalnet']:
+     for selection in ['retina50','retina101','hrnet40_cascade','ssd_vgg16']:
           for band in bands:
                lr = 0.002
                for scaler in [0.5,1,2]:
